@@ -62,6 +62,7 @@ class FullInformation(Screen):
         else:
             return "menu"
 
+
 class ListOrders(Screen):
     data = ListProperty()
 
