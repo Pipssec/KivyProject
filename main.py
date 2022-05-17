@@ -7,9 +7,10 @@ from kivy.uix.button import Button
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.recycleview import RecycleView
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.screenmanager import FadeTransition, FallOutTransition
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.clock import mainthread
 import sqlite3
 import hashlib
@@ -42,41 +43,81 @@ class AboutUs(Screen):
         else:
             return "menu"
 
-    pass
 
+class FullInformation(Screen):
+    name_order = StringProperty()
+    town = StringProperty()
+    full_text = StringProperty()
+    order_obl = StringProperty()
+    order_car = StringProperty()
+    order_car_model = StringProperty()
+    order_car_year = StringProperty()
+    order_car_fuel = StringProperty()
+    order_car_username = StringProperty()
+    order_phone = StringProperty()
+
+    def menu(self):
+        if len(switch_auth) == 1:
+            return "authmenu"
+        else:
+            return "menu"
 
 class ListOrders(Screen):
+    data = ListProperty()
+
     def on_pre_enter(self):
+        # Connecting database
         conn = sqlite3.connect('main.db')
         conn.text_factory = str
         c = conn.cursor()
         c.execute('PRAGMA encoding="UTF-8";')
+
+        # Orders names
         c.execute('SELECT name_order FROM orders')
         orders = c.fetchall()
-        c.execute('SELECT order_town FROM orders')
-        town = c.fetchall()
-        table = GridLayout(cols=1, size_hint_y=None)
-        d = Button(text="Меню", size_hint_y=None, height=40)
-        d.bind(on_press=(self.menu()))
-        table.add_widget(d)
-        for i in range(len(orders)):
-            size = dp(100)
-            name_order = orders[i]
-            town_order = town[i]
-            b = Button(text=str(name_order[0] + " " + town_order[0]),  size_hint_y=None, height=40)
-            table.add_widget(b)
-        root = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
-        root.add_widget(table)
-        self.add_widget(root)
 
-    def on_leave(self, *args):
-        self.clear_widgets()
+        # Orders towns
+        c.execute('SELECT order_town FROM orders')
+        towns = c.fetchall()
+
+        for order, town in zip(orders, towns):
+            self.data.append(
+                {
+                    "text": f'{order[0]} {town[0]}',
+                    "on_release": lambda x=(order[0]): self.show_full_information(x)
+                }
+            )
+
+    def show_full_information(self, full_information):
+        full_information_screen = sm.get_screen('fullinformation')
+        conn = sqlite3.connect('main.db')
+        conn.text_factory = str
+        c = conn.cursor()
+        c.execute('PRAGMA encoding="UTF-8";')
+        c.execute(f'SELECT * FROM orders WHERE orders.name_order = ?', (full_information,))
+        information = c.fetchone()
+        full_information_screen.name_order = information[0]
+        full_information_screen.town = information[2]
+        full_information_screen.full_text = information[1]
+        full_information_screen.order_obl = information[3]
+        full_information_screen.order_car = information[4]
+        full_information_screen.order_car_model = information[5]
+        full_information_screen.order_car_year = information[6]
+        full_information_screen.order_car_fuel = information[7]
+        full_information_screen.order_car_username = information[8]
+        full_information_screen.order_phone = information[9]
+
+        sm.current = 'fullinformation'
+        # We need to change to full information screen here
 
     def menu(self):
         if len(switch_auth) == 1:
-            return (lambda *_: setattr(sm, 'current', 'authmenu'))
+            return "authmenu"
         else:
-            return (lambda *_: setattr(sm, 'current', 'menu'))
+            return "menu"
+
+    def on_leave(self):
+        self.data.clear()
 
 
 class RegBad(Screen):
@@ -158,6 +199,8 @@ class Authorization(Screen):
 
 
 class ListSto(Screen):
+    data = ListProperty()
+
     def on_pre_enter(self, *args):
         conn = sqlite3.connect('main.db')
         conn.text_factory = str
@@ -169,32 +212,21 @@ class ListSto(Screen):
         town_STO = c.fetchall()
         c.execute('SELECT phone_number FROM user')
         phone_number = c.fetchall()
-        table = GridLayout(cols=1, size_hint_y=None)
-        d = Button(text="Меню", size_hint_y=None, height=40)
-        d.bind(on_press=(self.menu()))
-        table.add_widget(d)
         if len(name_STO) != 0:
             for i in range(len(name_STO)):
-                size = dp(100)
                 name_ST = name_STO[i]
                 town_ST = town_STO[i]
                 phone = phone_number[i]
-                b = Button(text=str(name_ST[0] + " " + town_ST[0] + " " + phone[0]), size_hint_y=None, height=40)
-                table.add_widget(b)
+                self.data.append({"text": f'{name_ST[0]} {town_ST[0]} {phone[0]}'})
         else:
             pass
-        root = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
-        root.add_widget(table)
-        self.add_widget(root)
-
-    def on_leave(self, *args):
-        self.clear_widgets()
 
     def menu(self):
+        self.data.clear()
         if len(switch_auth) == 1:
-            return (lambda *_: setattr(sm, 'current', 'authmenu'))
+            return "authmenu"
         else:
-            return (lambda *_: setattr(sm, 'current', 'menu'))
+            return "menu"
 
 
 class CreateOrder(Screen):
@@ -310,6 +342,7 @@ sm.add_widget(AuthBad(name='authbad'))
 sm.add_widget(AuthMenu(name='authmenu'))
 sm.add_widget(OrderGood(name='ordergood'))
 sm.add_widget(MyProfile(name='myprofile'))
+sm.add_widget(FullInformation(name='fullinformation'))
 
 
 class MyApp(App):

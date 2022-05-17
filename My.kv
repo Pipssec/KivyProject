@@ -75,7 +75,66 @@
             on_press: root.manager.current = root.menu()
 
 #######################################
+<ListOrders>:
+    canvas.before:
+        Color:
+            rgb: 1, .17, 0, 0
+        Rectangle:
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
 
+        RecycleView:
+            data: root.data
+            viewclass: 'Button'
+
+            RecycleBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(10)
+                default_size: None, dp(50)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+
+        Button:
+            text: 'Меню'
+            on_press: root.manager.current = root.menu()
+            size_hint: 1, .1
+            # size: "100dp", "60dp"
+            # width: "100dp"
+            # height: "60dp"
+            # x, center_x, right
+            # y, center_y, top
+            pos_hint: { "center_y": .5 }
+
+#######################################
+<ListSto>:
+    canvas.before:
+        Color:
+            rgb: 1, .17, 0, 0
+        Rectangle:
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+
+        RecycleView:
+            data: root.data
+            viewclass: 'Button'
+
+            RecycleBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(10)
+                default_size: None, dp(50)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+
+        Button:
+            text: 'Меню'
+            on_press: root.manager.current = root.menu()
+            size_hint: 1, .1
 
 #######################################
 
@@ -570,3 +629,89 @@
 
 ##############################################
 
+<FullInformation>:
+    canvas.before:
+        Color:
+            rgb: 1, .17, 0, 0
+        Rectangle:
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+
+
+        GridLayout:
+            cols:2
+
+            BoxLayout:
+
+                orientation: 'vertical'
+                padding: dp(5)
+                spacing: dp(10)
+                Widget:
+                InformationLabel:
+                    text: "Название заказа:"
+                InformationLabel:
+                    text: "Полное описание заказа:"
+                InformationLabel:
+                    text: "Город:"
+                InformationLabel:
+                    text: "Область:"
+                InformationLabel:
+                    text: "Марка автомобиля:"
+                InformationLabel:
+                    text: "Модель автомобиля:"
+                InformationLabel:
+                    text: "Год выпуска:"
+                InformationLabel:
+                    text: "Тип топлива и обьем:"
+                InformationLabel:
+                    text: "Имя заказчика:"
+                InformationLabel:
+                    text: "Контактный номер заказчика:"
+                Widget:
+
+            BoxLayout:
+
+                orientation: 'vertical'
+                padding: dp(5)
+                spacing: dp(10)
+                Widget:
+                InformationLabel:
+                    text: root.name_order
+                InformationLabel:
+                    text: root.full_text
+                InformationLabel:
+                    text: root.town
+                InformationLabel:
+                    text: root.order_obl
+                InformationLabel:
+                    text: root.order_car
+                InformationLabel:
+                    text: root.order_car_model
+                InformationLabel:
+                    text: root.order_car_year
+                InformationLabel:
+                    text: root.order_car_fuel
+                InformationLabel:
+                    text: root.order_car_username
+                InformationLabel:
+                    text: root.order_phone
+                Widget:
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, .1
+            Button:
+                text: "Назад"
+                size_hint: .5, 1
+                on_press: root.manager.current = 'list_orders'
+            Button:
+                text: "Меню"
+                size_hint: .5, 1
+                on_press: root.manager.current = root.menu()
+
+<InformationLabel@Label>:
+    font_size: sp(15)
+    size_hint_y: None
+    height: self.texture_size[1]
+    text_size: self.size
