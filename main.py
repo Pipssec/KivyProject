@@ -1,21 +1,12 @@
-from kivy.metrics import dp
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.recycleview import RecycleView
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.screenmanager import FadeTransition, FallOutTransition
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
-from kivy.clock import mainthread
 import sqlite3
 import hashlib
 
-from kivy.uix.scrollview import ScrollView
 
 Window.size = (480, 720)
 switch_auth = []
@@ -67,20 +58,14 @@ class ListOrders(Screen):
     data = ListProperty()
 
     def on_pre_enter(self):
-        # Connecting database
         conn = sqlite3.connect('main.db')
         conn.text_factory = str
         c = conn.cursor()
         c.execute('PRAGMA encoding="UTF-8";')
-
-        # Orders names
         c.execute('SELECT name_order FROM orders')
         orders = c.fetchall()
-
-        # Orders towns
         c.execute('SELECT order_town FROM orders')
         towns = c.fetchall()
-
         for order, town in zip(orders, towns):
             self.data.append(
                 {
@@ -238,7 +223,7 @@ class CreateOrder(Screen):
         c.execute('PRAGMA encoding="UTF-8";')
         c.execute('''CREATE TABLE IF NOT EXISTS orders
             (name_order text, text_order text, order_town text, order_oblast text, order_car text, order_car_model text, order_car_year text, order_car_fuel text, order_username text, order_phone ) ''')
-        name_ord = (str(self.ids.name_order.text)).casefold()
+        name_ord = (str(self.ids.name_order.text)).capitalize()
         text_order = (str(self.ids.text_order.text)).casefold()
         order_town = (str(self.ids.order_town.text)).capitalize()
         order_obl = (str(self.ids.order_obl.text)).capitalize()

@@ -638,65 +638,92 @@
     BoxLayout:
         orientation: 'vertical'
 
+        FloatLayout:
 
-        GridLayout:
-            cols:2
+            InformationLabel:
+                text: "Название заказа:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .95}
+            InformationLabel:
+                text: root.name_order
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .95}
+            InformationLabel:
+                text: "Полное описание заказа:"
+                size_hint: 1, .05
+                pos_hint: {'x': .0, 'y': .90}
+            InformationLabel:
+                text: root.full_text
+                size_hint: 1, .15
+                pos_hint: {'x': .0, 'y': .75}
+                text_size: self.size
+                halign: 'left'
+                valign: 'top'
+            InformationLabel:
+                text: "Марка автомобиля:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .60}
+            InformationLabel:
+                text: root.order_car
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .60}
+            InformationLabel:
+                text: "Модель автомобиля:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .55}
+            InformationLabel:
+                text: root.order_car_model
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .55}
+            InformationLabel:
+                text: "Год выпуска:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .50}
+            InformationLabel:
+                text: root.order_car_year
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .50}
+            InformationLabel:
+                text: "Тип топлива и обьем:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .45}
+            InformationLabel:
+                text: root.order_car_fuel
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .45}
+            InformationLabel:
+                text: "Имя заказчика:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .40}
+            InformationLabel:
+                text: root.order_car_username
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .40}
+            InformationLabel:
+                text: "Контактный номер заказчика:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .35}
+            InformationLabel:
+                text: root.order_phone
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .35}
+            InformationLabel:
+                text: "Город:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .30}
+            InformationLabel:
+                text: root.town
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .30}
+            InformationLabel:
+                text: "Область:"
+                size_hint: .5, .05
+                pos_hint: {'x': .0, 'y': .25}
+            InformationLabel:
+                text: root.order_obl
+                size_hint: .5, .05
+                pos_hint: {'x': .5, 'y': .25}
 
-            BoxLayout:
-
-                orientation: 'vertical'
-                padding: dp(5)
-                spacing: dp(10)
-                Widget:
-                InformationLabel:
-                    text: "Название заказа:"
-                InformationLabel:
-                    text: "Полное описание заказа:"
-                InformationLabel:
-                    text: "Город:"
-                InformationLabel:
-                    text: "Область:"
-                InformationLabel:
-                    text: "Марка автомобиля:"
-                InformationLabel:
-                    text: "Модель автомобиля:"
-                InformationLabel:
-                    text: "Год выпуска:"
-                InformationLabel:
-                    text: "Тип топлива и обьем:"
-                InformationLabel:
-                    text: "Имя заказчика:"
-                InformationLabel:
-                    text: "Контактный номер заказчика:"
-                Widget:
-
-            BoxLayout:
-
-                orientation: 'vertical'
-                padding: dp(5)
-                spacing: dp(10)
-                Widget:
-                InformationLabel:
-                    text: root.name_order
-                InformationLabel:
-                    text: root.full_text
-                InformationLabel:
-                    text: root.town
-                InformationLabel:
-                    text: root.order_obl
-                InformationLabel:
-                    text: root.order_car
-                InformationLabel:
-                    text: root.order_car_model
-                InformationLabel:
-                    text: root.order_car_year
-                InformationLabel:
-                    text: root.order_car_fuel
-                InformationLabel:
-                    text: root.order_car_username
-                InformationLabel:
-                    text: root.order_phone
-                Widget:
 
         BoxLayout:
             orientation: 'horizontal'
@@ -712,5 +739,5 @@
 
 <InformationLabel@Label>:
     font_size: sp(15)
-    size_hint_y: None
-    height: self.texture_size[1]
+    halign: 'left'
+
