@@ -4,10 +4,11 @@ from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.screenmanager import FadeTransition, FallOutTransition
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
+from kivy.config import Config
 import sqlite3
 import hashlib
 
-
+Config.set('kivy', 'keyboard_mode', 'systemanddock')
 Window.size = (480, 720)
 switch_auth = []
 profile_name = []
