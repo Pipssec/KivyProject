@@ -1,15 +1,14 @@
+import psycopg2
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.screenmanager import FadeTransition, FallOutTransition
-from kivy.properties import ObjectProperty, StringProperty, ListProperty
+from kivy.uix.screenmanager import FadeTransition
+from kivy.properties import StringProperty, ListProperty
 from kivy.config import Config
 import sqlite3
 import hashlib
 
 Config.set('kivy', 'keyboard_mode', 'systemanddock')
-Window.size = (480, 720)
 switch_auth = []
 profile_name = []
 btn_name = []
@@ -59,29 +58,45 @@ class ListOrders(Screen):
     data = ListProperty()
 
     def on_pre_enter(self):
-        conn = sqlite3.connect('main.db')
-        conn.text_factory = str
-        c = conn.cursor()
-        c.execute('PRAGMA encoding="UTF-8";')
-        c.execute('SELECT name_order FROM orders')
-        orders = c.fetchall()
-        c.execute('SELECT order_town FROM orders')
-        towns = c.fetchall()
-        for order, town in zip(orders, towns):
-            self.data.append(
-                {
-                    "text": f'{order[0]} {town[0]}',
-                    "on_release": lambda x=(order[0]): self.show_full_information(x)
-                }
-            )
+        try:
+            conn = psycopg2.connect(user="postgres",
+                                    # пароль, который указали при установке PostgreSQL
+                                    password="qwerty",
+                                    host="127.0.0.1",
+                                    port="5432",
+                                    database="main")
+
+            # Курсор для выполнения операций с базой данных
+            c = conn.cursor()
+            try:
+                c.execute('SELECT name_order FROM orders')
+                orders = c.fetchall()
+                c.execute('SELECT order_town FROM orders')
+                towns = c.fetchall()
+                for order, town in zip(orders, towns):
+                    self.data.append(
+                        {
+                            "text": f'{order[0]} {town[0]}',
+                            "on_release": lambda x=(order[0]): self.show_full_information(x)
+                        }
+                    )
+            except:
+                pass
+        except:
+            pass
 
     def show_full_information(self, full_information):
         full_information_screen = sm.get_screen('fullinformation')
-        conn = sqlite3.connect('main.db')
-        conn.text_factory = str
+        conn = psycopg2.connect(user="postgres",
+                                # пароль, который указали при установке PostgreSQL
+                                password="qwerty",
+                                host="178.121.42.222",
+                                port="5432",
+                                database="main")
+
+        # Курсор для выполнения операций с базой данных
         c = conn.cursor()
-        c.execute('PRAGMA encoding="UTF-8";')
-        c.execute(f'SELECT * FROM orders WHERE orders.name_order = ?', (full_information,))
+        c.execute(f'SELECT * FROM orders WHERE name_order LIKE %s', (full_information,))
         information = c.fetchone()
         full_information_screen.name_order = information[0]
         full_information_screen.town = information[2]
@@ -113,7 +128,7 @@ class RegBad(Screen):
 
 class Registration(Screen):
     def reg(self):
-        conn = sqlite3.connect('main.db')
+        conn = sqlite3.connect('data/main.db')
         conn.text_factory = str
         c = conn.cursor()
         c.execute('PRAGMA encoding="UTF-8";')
@@ -124,13 +139,13 @@ class Registration(Screen):
         user = c.fetchone()
         name_sto = str(self.ids.name_STO.text)
         oblast = (str(self.ids.name_obl.text)).capitalize()
-        c.execute("SELECT COUNT(oblast) FROM country WHERE country.oblast=?", (oblast,))
-        obl = c.fetchone()
         town_STO = (str(self.ids.name_town.text)).capitalize()
+        """c.execute("SELECT COUNT(oblast) FROM country WHERE country.oblast=?", (oblast,))
+        obl = c.fetchone()
         c.execute("SELECT COUNT(town) FROM country WHERE country.town=?", (town_STO,))
-        town = c.fetchone()
+        town = c.fetchone()"""
         phone_number = (str(self.ids.number_phone.text))
-        if obl[0] != 0 and len(name_sto) != 0 and town[0] != 0 and len(phone_number) != 0:
+        if """obl[0] != 0""" and len(name_sto) != 0 and """town[0] != 0""" and len(phone_number) != 0:
             if user[0] != 1:
                 if self.ids.name_pwd.text == self.ids.name_pwd2.text:
                     hash_pwd = hashlib.sha224((self.ids.name_pwd.text).encode('utf-8')).hexdigest()
@@ -138,6 +153,8 @@ class Registration(Screen):
                         "INSERT INTO user(login, password, name_STO, oblast_STO, town_STO, phone_number) VALUES (?, ?, ?, ?, ?, ?)",
                         (login, hash_pwd, name_sto, oblast, town_STO, phone_number))
                     self.ids.name.text = ''
+                    self.ids.name_pwd.text = ''
+                    self.ids.name_pwd2.text = ''
                     self.ids.name_STO.text = ''
                     self.ids.name_obl.text = ''
                     self.ids.name_town.text = ''
@@ -171,17 +188,22 @@ class BadOblastOrTown2(Screen):
 class Authorization(Screen):
     def auth(self):
         auth_pass = hashlib.sha224((self.ids.auth_pwd.text).encode('utf-8')).hexdigest()
-        conn = sqlite3.connect('main.db')
+        conn = sqlite3.connect('data/main.db')
         conn.text_factory = str
         c = conn.cursor()
-        auth_name = (str(self.ids.auth_name.text)).casefold()
-        c.execute(f'SELECT "password" FROM user WHERE login = "{auth_name}" ')
-        hash_pwd = c.fetchone()
-        if auth_pass == hash_pwd[0]:
-            switch_on()
-            profile_name.append(auth_name)
-            return 'authgood'
-        else:
+        try:
+            auth_name = (str(self.ids.auth_name.text)).casefold()
+            c.execute(f'SELECT "password" FROM user WHERE login = "{auth_name}" ')
+            hash_pwd = c.fetchone()
+            if auth_pass == hash_pwd[0]:
+                switch_on()
+                profile_name.append(auth_name)
+                self.ids.auth_name.text = ''
+                self.ids.auth_pwd.text = ''
+                return 'authgood'
+            else:
+                pass
+        except:
             return 'authbad'
 
 
@@ -189,23 +211,26 @@ class ListSto(Screen):
     data = ListProperty()
 
     def on_pre_enter(self, *args):
-        conn = sqlite3.connect('main.db')
+        conn = sqlite3.connect('data/main.db')
         conn.text_factory = str
         c = conn.cursor()
         c.execute('PRAGMA encoding="UTF-8";')
-        c.execute('SELECT name_STO FROM user')
-        name_STO = c.fetchall()
-        c.execute('SELECT town_STO FROM user')
-        town_STO = c.fetchall()
-        c.execute('SELECT phone_number FROM user')
-        phone_number = c.fetchall()
-        if len(name_STO) != 0:
-            for i in range(len(name_STO)):
-                name_ST = name_STO[i]
-                town_ST = town_STO[i]
-                phone = phone_number[i]
-                self.data.append({"text": f'{name_ST[0]} {town_ST[0]} {phone[0]}'})
-        else:
+        try:
+            c.execute('SELECT name_STO FROM user')
+            name_STO = c.fetchall()
+            c.execute('SELECT town_STO FROM user')
+            town_STO = c.fetchall()
+            c.execute('SELECT phone_number FROM user')
+            phone_number = c.fetchall()
+            if len(name_STO) != 0:
+                for i in range(len(name_STO)):
+                    name_ST = name_STO[i]
+                    town_ST = town_STO[i]
+                    phone = phone_number[i]
+                    self.data.append({"text": f'{name_ST[0]} {town_ST[0]} {phone[0]}'})
+            else:
+                pass
+        except:
             pass
 
     def menu(self):
@@ -217,13 +242,19 @@ class ListSto(Screen):
 
 
 class CreateOrder(Screen):
+
     def create(self):
-        conn = sqlite3.connect('main.db')
-        conn.text_factory = str
+        conn = psycopg2.connect(user="postgres",
+                                      # пароль, который указали при установке PostgreSQL
+                                      password="qwerty",
+                                      host="178.121.42.222",
+                                      port="5432",
+                                      database="main")
+
+        # Курсор для выполнения операций с базой данных
         c = conn.cursor()
-        c.execute('PRAGMA encoding="UTF-8";')
-        c.execute('''CREATE TABLE IF NOT EXISTS orders
-            (name_order text, text_order text, order_town text, order_oblast text, order_car text, order_car_model text, order_car_year text, order_car_fuel text, order_username text, order_phone ) ''')
+        #c.execute('PRAGMA encoding="UTF-8";')
+        c.execute('CREATE TABLE IF NOT EXISTS orders(name_order text, text_order text, order_town text, order_oblast text, order_car text, order_car_model text, order_car_year text, order_car_fuel text, order_username text, order_phone text );')
         name_ord = (str(self.ids.name_order.text)).capitalize()
         text_order = (str(self.ids.text_order.text)).casefold()
         order_town = (str(self.ids.order_town.text)).capitalize()
@@ -234,20 +265,21 @@ class CreateOrder(Screen):
         order_car_fuel = (str(self.ids.order_car_fuel.text)).casefold()
         order_username = (str(self.ids.order_username.text))
         order_phone = (str(self.ids.order_username_phone.text))
-        numb = c.execute('SELECT "name_order" FROM orders').fetchall()
-        number = len(numb) + 1
+        try:
+            numb = c.execute('SELECT "name_order" FROM orders').fetchall()
+            number = len(numb) + 1
+        except:
+            number = 1
         name_order = f'{number}. {name_ord}'
-        c.execute("SELECT COUNT(oblast) FROM country WHERE country.oblast=?", (order_obl,))
+        """c.execute("SELECT COUNT(oblast) FROM country WHERE country.oblast=?", (order_obl,))
         obl = c.fetchone()
         c.execute("SELECT COUNT(town) FROM country WHERE country.town=?", (order_town,))
-        town = c.fetchone()
-        if len(name_order) != 0 and len(text_order) != 0 and obl[0] != 0 and town[0] != 0 and len(
+        town = c.fetchone()"""
+        if len(name_order) != 0 and len(text_order) != 0 and """obl[0] != 0 and town[0] != 0""" and len(
                 order_car) != 0 and len(order_car_model) != 0 and len(order_car_year) != 0 and len(
             order_car_fuel) != 0 and len(order_username) != 0 and len(order_phone) != 0:
             c.execute(
-                "INSERT INTO orders(name_order, text_order, order_town, order_oblast, order_car, order_car_model, order_car_year, order_car_fuel, order_username, order_phone  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (name_order, text_order, order_town, order_obl, order_car, order_car_model, order_car_year,
-                 order_car_fuel, order_username, order_phone))
+                "INSERT INTO orders(name_order, text_order, order_town, order_oblast, order_car, order_car_model,order_car_year, order_car_fuel, order_username, order_phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", [name_order, text_order, order_town, order_obl, order_car, order_car_model, order_car_year, order_car_fuel, order_username, order_phone])
             conn.commit()
             self.ids.name_order.text = ''
             self.ids.text_order.text = ''
@@ -298,7 +330,7 @@ class MyProfile(Screen):
     sto_phone = StringProperty()
 
     def on_pre_enter(self):
-        conn = sqlite3.connect('main.db')
+        conn = sqlite3.connect('data/main.db')
         conn.text_factory = str
         c = conn.cursor()
         c.execute('PRAGMA encoding="UTF-8";')
@@ -307,6 +339,14 @@ class MyProfile(Screen):
         self.sto_name = name_sto[0]
         self.sto_town = name_sto[1]
         self.sto_phone = name_sto[2]
+
+
+class Error(Screen):
+    def menu(self):
+        if len(switch_auth) == 1:
+            return "authmenu"
+        else:
+            return "menu"
 
 
 kv = Builder.load_file("My.kv")
@@ -330,6 +370,7 @@ sm.add_widget(AuthMenu(name='authmenu'))
 sm.add_widget(OrderGood(name='ordergood'))
 sm.add_widget(MyProfile(name='myprofile'))
 sm.add_widget(FullInformation(name='fullinformation'))
+sm.add_widget(Error(name='error'))
 
 
 class MyApp(App):
