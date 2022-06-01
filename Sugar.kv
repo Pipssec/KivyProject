@@ -1,0 +1,198 @@
+<Menu>:
+    FloatLayout:
+        AsyncImage:
+            source: 'data/logo3.jpg'
+    FloatLayout:
+        Button:
+            text: "2:1"
+            pos_hint: {'x': .15, 'y': .6}
+            size_hint: .2, .2
+            font_size: 30
+            on_press: root.manager.current = '2k1'
+
+        Button:
+            text: "1,5:1"
+            pos_hint: {'x': .65, 'y': .6}
+            size_hint: .2, .2
+            font_size: 30
+            on_press: root.manager.current = '15k1'
+
+        Label:
+            text: "Cахар : Вода"
+            pos_hint: {'x': .0, 'y': .9}
+            size_hint: 1, .1
+            font_size: 30
+
+        Button:
+            text: "1:1"
+            pos_hint: {'x': .15, 'y': .3}
+            size_hint: .2, .2
+            font_size: 30
+            on_press: root.manager.current = '1k1'
+
+        Button:
+            text: "1:1,5"
+            pos_hint: {'x': .65, 'y': .3}
+            size_hint: .2, .2
+            font_size: 30
+            on_press: root.manager.current = '1k15'
+
+################################################
+
+<K1K1>:
+    FloatLayout:
+        AsyncImage:
+            source: 'data/logo3.jpg'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [30, 20, 30, 20]
+        Label:
+            text: "Введите количество сиропа в мл(1:1):"
+            size_hint: 1, .05
+            font_size: 20
+        TextInput:
+            id: sirop
+            multiline: False
+            size_hint: 1, .05
+            input_type: 'number'
+            input_filter: 'int'
+        Label:
+            size_hint: 1, .05
+        Button:
+            text: "Рассчитать"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.rasschet()
+        Label:
+            text: root.sugar
+            size_hint: 1, .4
+            font_size: 30
+        Label:
+            text: root.water
+            size_hint: 1, .4
+            font_size: 30
+        Button:
+            text: "Меню"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.manager.current = 'menu'
+
+#####################################################
+
+<K2K1>:
+    FloatLayout:
+        AsyncImage:
+            source: 'data/logo3.jpg'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [30, 20, 30, 20]
+        Label:
+            text: "Введите количество сиропа в мл(2:1):"
+            size_hint: 1, .05
+            font_size: 20
+        TextInput:
+            id: sirop
+            multiline: False
+            size_hint: 1, .05
+            input_type: 'number'
+            input_filter: 'int'
+        Label:
+            size_hint: 1, .05
+        Button:
+            text: "Рассчитать"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.rasschet()
+        Label:
+            text: root.sugar
+            size_hint: 1, .4
+            font_size: 30
+        Label:
+            text: root.water
+            size_hint: 1, .4
+            font_size: 30
+        Button:
+            text: "Меню"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.manager.current = 'menu'
+
+#######################################################
+
+<K15K1>:
+    FloatLayout:
+        AsyncImage:
+            source: 'data/logo3.jpg'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [30, 20, 30, 20]
+        Label:
+            text: "Введите количество сиропа в мл(1,5:1):"
+            size_hint: 1, .05
+            font_size: 20
+        TextInput:
+            id: sirop
+            multiline: False
+            size_hint: 1, .05
+            input_type: 'number'
+            input_filter: 'int'
+        Label:
+            size_hint: 1, .05
+        Button:
+            text: "Рассчитать"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.rasschet()
+        Label:
+            text: root.sugar
+            size_hint: 1, .4
+            font_size: 30
+        Label:
+            text: root.water
+            size_hint: 1, .4
+            font_size: 30
+        Button:
+            text: "Меню"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.manager.current = 'menu'
+
+#####################################################
+
+<K1K15>:
+    FloatLayout:
+        AsyncImage:
+            source: 'data/logo3.jpg'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [30, 20, 30, 20]
+        Label:
+            text: "Введите количество сиропа в мл(1:1,5):"
+            size_hint: 1, .05
+            font_size: 20
+        TextInput:
+            id: sirop
+            multiline: False
+            size_hint: 1, .05
+            input_type: 'number'
+            input_filter: 'int'
+        Label:
+            size_hint: 1, .05
+        Button:
+            text: "Рассчитать"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.rasschet()
+        Label:
+            text: root.sugar
+            size_hint: 1, .4
+            font_size: 30
+        Label:
+            text: root.water
+            size_hint: 1, .4
+            font_size: 30
+        Button:
+            text: "Меню"
+            size_hint: 1, .1
+            font_size: 20
+            on_release: root.manager.current = 'menu'
