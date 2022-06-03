@@ -62,9 +62,9 @@ class ListOrders(Screen):
             conn = psycopg2.connect(user="postgres",
                                     # пароль, который указали при установке PostgreSQL
                                     password="qwerty",
-                                    host="127.0.0.1",
+                                    host="178.172.236.132",
                                     port="5432",
-                                    database="main")
+                                    database="postgres")
 
             # Курсор для выполнения операций с базой данных
             c = conn.cursor()
@@ -88,11 +88,11 @@ class ListOrders(Screen):
     def show_full_information(self, full_information):
         full_information_screen = sm.get_screen('fullinformation')
         conn = psycopg2.connect(user="postgres",
-                                # пароль, который указали при установке PostgreSQL
-                                password="qwerty",
-                                host="178.121.42.222",
-                                port="5432",
-                                database="main")
+                                    # пароль, который указали при установке PostgreSQL
+                                    password="qwerty",
+                                    host="178.172.236.132",
+                                    port="5432",
+                                    database="postgres")
 
         # Курсор для выполнения операций с базой данных
         c = conn.cursor()
@@ -245,11 +245,11 @@ class CreateOrder(Screen):
 
     def create(self):
         conn = psycopg2.connect(user="postgres",
-                                      # пароль, который указали при установке PostgreSQL
-                                      password="qwerty",
-                                      host="178.121.42.222",
-                                      port="5432",
-                                      database="main")
+                                    # пароль, который указали при установке PostgreSQL
+                                    password="qwerty",
+                                    host="178.172.236.132",
+                                    port="5432",
+                                    database="postgres")
 
         # Курсор для выполнения операций с базой данных
         c = conn.cursor()
