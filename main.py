@@ -83,7 +83,7 @@ class ListOrders(Screen):
             except:
                 pass
         except:
-            pass
+            pas
 
     def show_full_information(self, full_information):
         full_information_screen = sm.get_screen('fullinformation')
