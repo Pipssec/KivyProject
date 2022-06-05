@@ -62,7 +62,7 @@ class ListOrders(Screen):
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
-                                    database="postgres")
+                                    database='main')
             c = conn.cursor()
             try:
                 c.execute('SELECT name_order FROM orders')
@@ -88,7 +88,7 @@ class ListOrders(Screen):
                                 password="qwerty",
                                 host="127.0.0.1",
                                 port="5432",
-                                database="postgres")
+                                database='main')
         c = conn.cursor()
         c.execute(f'SELECT * FROM orders WHERE name_order LIKE %s', (full_information,))
         information = c.fetchone()
@@ -126,7 +126,7 @@ class Registration(Screen):
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
-                                    database="postgres")
+                                    database='main')
             c = conn.cursor()
             c.execute('''CREATE TABLE IF NOT EXISTS user
                 (login text, password text, name_STO text, oblast_STO text, town_STO text, phone_number text ) ''')
@@ -191,7 +191,7 @@ class Authorization(Screen):
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
-                                    database="postgres")
+                                    database='main')
             c = conn.cursor()
             auth_name = (str(self.ids.auth_name.text)).casefold()
             c.execute(f'SELECT "password" FROM user WHERE login = "{auth_name}" ')
@@ -218,7 +218,7 @@ class ListSto(Screen):
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
-                                    database="postgres")
+                                    database='main')
             c = conn.cursor()
             try:
                 c.execute('SELECT name_STO FROM user')
@@ -258,7 +258,7 @@ class CreateOrder(Screen):
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
-                                    database="postgres")
+                                    database='main')
             c = conn.cursor()
             c.execute(
                 'CREATE TABLE IF NOT EXISTS orders(name_order text, text_order text, order_town text, order_oblast text, order_car text, order_car_model text, order_car_year text, order_car_fuel text, order_username text, order_phone text );')
@@ -347,7 +347,7 @@ class MyProfile(Screen):
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
-                                    database="postgres")
+                                    database='main')
             c = conn.cursor()
             c.execute(f'SELECT name_STO, town_STO, phone_number FROM user WHERE login = "{profile_name[0]}" ')
             name_sto = c.fetchone()
