@@ -744,3 +744,22 @@
 
 ##########################################################
 
+<NoSignal>:
+    canvas.before:
+        Color:
+            rgb: 1, .17, 0, 0
+        Rectangle:
+            size: self.size
+
+    FloatLayout:
+        Label:
+            text: 'Ошибка связи '
+            size_hint: .5, .6
+            pos_hint: {'x':.3, 'y': .35}
+            color: 0, .35, .35
+            font_size: 70
+        Button:
+            text: 'Меню'
+            size_hint: 1, .1
+            pos_hint: {'x':.0, 'y': .0}
+            on_press: root.manager.current = root.menu()
