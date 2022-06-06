@@ -5,7 +5,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.screenmanager import FadeTransition
 from kivy.properties import StringProperty, ListProperty
 from kivy.config import Config
-import sqlite3
 import hashlib
 
 Config.set('kivy', 'keyboard_mode', 'systemanddock')
@@ -121,18 +120,23 @@ class RegBad(Screen):
 
 class Registration(Screen):
     def reg(self):
-        try:
+         try:
             conn = psycopg2.connect(user="postgres",
                                     password="qwerty",
                                     host="127.0.0.1",
                                     port="5432",
                                     database='main')
+
             c = conn.cursor()
-            c.execute('''CREATE TABLE IF NOT EXISTS user
-                (login text, password text, name_STO text, oblast_STO text, town_STO text, phone_number text ) ''')
+            c.execute(
+                  'CREATE TABLE IF NOT EXISTS users(login text, password text, name_STO text, oblast_STO text, town_STO text, phone_number text );')
+            user = [0]
             login = (str(self.ids.name.text)).casefold()
-            c.execute("SELECT COUNT(login) FROM user WHERE login LIKE %s", (login,))
-            user = c.fetchone()
+            try:
+                c.execute("SELECT COUNT(login) FROM users WHERE login LIKE %s", (login,))
+                user = c.fetchone()
+            except:
+                pass
             name_sto = str(self.ids.name_STO.text)
             oblast = (str(self.ids.name_obl.text)).capitalize()
             town_STO = (str(self.ids.name_town.text)).capitalize()
@@ -145,9 +149,8 @@ class Registration(Screen):
                 if user[0] != 1:
                     if self.ids.name_pwd.text == self.ids.name_pwd2.text:
                         hash_pwd = hashlib.sha224((self.ids.name_pwd.text).encode('utf-8')).hexdigest()
-                        c.execute(
-                            "INSERT INTO user(login, password, name_STO, oblast_STO, town_STO, phone_number) VALUES (%s, %s, %s, %s, %s, %s)",
-                            (login, hash_pwd, name_sto, oblast, town_STO, phone_number))
+                        c.execute("INSERT INTO users(login, password, name_STO, oblast_STO, town_STO, phone_number) VALUES (%s, %s, %s, %s, %s, %s)", [login, hash_pwd, name_sto, oblast, town_STO, phone_number])
+                        conn.commit()
                         self.ids.name.text = ''
                         self.ids.name_pwd.text = ''
                         self.ids.name_pwd2.text = ''
@@ -155,7 +158,6 @@ class Registration(Screen):
                         self.ids.name_obl.text = ''
                         self.ids.name_town.text = ''
                         self.ids.number_phone.text = ''
-                        conn.commit()
                         return 'reggood'
                     else:
                         return 'regbad'
@@ -163,7 +165,7 @@ class Registration(Screen):
                     return 'badlog'
             else:
                 return 'badobltown'
-        except:
+         except:
             sm.current = 'notsignal'
 
 
@@ -185,7 +187,7 @@ class BadOblastOrTown2(Screen):
 
 class Authorization(Screen):
     def auth(self):
-        try:
+         try:
             auth_pass = hashlib.sha224((self.ids.auth_pwd.text).encode('utf-8')).hexdigest()
             conn = psycopg2.connect(user="postgres",
                                     password="qwerty",
@@ -194,7 +196,7 @@ class Authorization(Screen):
                                     database='main')
             c = conn.cursor()
             auth_name = (str(self.ids.auth_name.text)).casefold()
-            c.execute(f'SELECT "password" FROM user WHERE login = "{auth_name}" ')
+            c.execute(f'SELECT "password" FROM users WHERE login LIKE %s ', (auth_name,))
             hash_pwd = c.fetchone()
             if auth_pass == hash_pwd[0]:
                 switch_on()
@@ -205,8 +207,8 @@ class Authorization(Screen):
                 return 'authgood'
             else:
                 return 'authbad'
-        except:
-            sm.current = 'notsignal'
+         except:
+             sm.current = 'notsignal'
 
 
 class ListSto(Screen):
@@ -221,11 +223,11 @@ class ListSto(Screen):
                                     database='main')
             c = conn.cursor()
             try:
-                c.execute('SELECT name_STO FROM user')
+                c.execute('SELECT name_STO FROM users')
                 name_STO = c.fetchall()
-                c.execute('SELECT town_STO FROM user')
+                c.execute('SELECT town_STO FROM users')
                 town_STO = c.fetchall()
-                c.execute('SELECT phone_number FROM user')
+                c.execute('SELECT phone_number FROM users')
                 phone_number = c.fetchall()
                 if len(name_STO) != 0:
                     for i in range(len(name_STO)):
@@ -300,7 +302,7 @@ class CreateOrder(Screen):
                 self.ids.order_car_fuel.text = ''
                 self.ids.order_username.text = ''
                 self.ids.order_username_phone.text = ''
-                conn.close()
+
                 return "ordergood"
             else:
                 return 'badobltown2'
@@ -349,7 +351,7 @@ class MyProfile(Screen):
                                     port="5432",
                                     database='main')
             c = conn.cursor()
-            c.execute(f'SELECT name_STO, town_STO, phone_number FROM user WHERE login = "{profile_name[0]}" ')
+            c.execute(f'SELECT name_STO, town_STO, phone_number FROM users WHERE login LIKE %s', (profile_name[0],))
             name_sto = c.fetchone()
             self.sto_name = name_sto[0]
             self.sto_town = name_sto[1]
