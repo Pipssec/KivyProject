@@ -196,15 +196,23 @@ class Authorization(Screen):
                                     database='main')
             c = conn.cursor()
             auth_name = (str(self.ids.auth_name.text)).casefold()
+            try:
+                c.execute("SELECT COUNT(login) FROM users WHERE login LIKE %s", (auth_name,))
+                user = c.fetchone()
+            except:
+                pass
             c.execute(f'SELECT "password" FROM users WHERE login LIKE %s ', (auth_name,))
             hash_pwd = c.fetchone()
-            if auth_pass == hash_pwd[0]:
-                switch_on()
-                profile_name.append(auth_name)
-                self.ids.auth_name.text = ''
-                self.ids.auth_pwd.text = ''
-                conn.close()
-                return 'authgood'
+            if user[0] == 1:
+                if auth_pass == hash_pwd[0]:
+                    switch_on()
+                    profile_name.append(auth_name)
+                    self.ids.auth_name.text = ''
+                    self.ids.auth_pwd.text = ''
+                    conn.close()
+                    return 'authgood'
+                else:
+                    return 'authbad'
             else:
                 return 'authbad'
          except:
