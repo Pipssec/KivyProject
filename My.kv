@@ -19,7 +19,7 @@
             on_press: root.manager.current = 'list_orders'
             #font_size: 70
         Itembutton:
-            text: "Список\n   СТО"
+            text: "Список СТО"
             pos_hint: {'x': .05, 'y': .55}
             size_hint: .5, .1
             on_press: root.manager.current = 'liststo'
@@ -31,7 +31,7 @@
             on_press: root.manager.current = 'about_us'
 
         Itembutton:
-            text: "Создать\nзаказ"
+            text: "Создать заказ"
             pos_hint: {'x': .05, 'y': .4}
             size_hint: .3, .1
             on_press: root.manager.current = 'createorder'
@@ -84,6 +84,8 @@
     FloatLayout:
         AsyncImage:
             source: 'data/logo2.jpg'
+            allow_stretch: True
+            keep_ratio: False
 
     BoxLayout:
         orientation: 'vertical'
@@ -811,9 +813,9 @@
                 on_press: root.manager.current = root.menu()
 
 <InformationLabel@Label>:
-    font_size: sp(15)
+    #font_size: 70
     halign: 'left'
-
+    color: 0.396078431, 0.803921569, 0.807843137, 1
 
 ##########################################################
 
@@ -843,7 +845,8 @@
             on_press: root.manager.current = root.menu()
 
 <Itembutton@Button>:
-    #color: 0, 0, 0
+    #font_size: 70
+    color: 0.396078431, 0.803921569, 0.807843137, 1
     background_color: 0.5882, 0.2941, 0, .4
     canvas.before:
         Color:
