@@ -270,6 +270,28 @@ async def createorder(websocket, name_ord, text_order, order_town, order_obl, or
         connection.close()
 
 
+async def loadmenu(websocket):
+    jsons = []
+    try:
+        connection = connectdb()
+        jsons.append(
+            {
+                "answer": 'ok'
+            }
+        )
+        result = json.dumps(jsons)
+        await websocket.send(result)
+        connection.close()
+    except:
+        jsons.append(
+            {
+                "answer": 'bad'
+            }
+        )
+        result = json.dumps(jsons)
+        await websocket.send(result)
+
+
 async def echo(websocket):
     async for message in websocket:
         parsed = json.loads(message)
@@ -291,6 +313,8 @@ async def echo(websocket):
                               parsed["order_obl"], parsed["order_car"], parsed["order_car_model"],
                               parsed["order_car_year"], parsed["order_car_fuel"], parsed["order_username"],
                               parsed["order_phone"])
+        if parsed["method"] == "loadmenu":
+            await loadmenu(websocket)
 
 
 async def main():
