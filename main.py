@@ -1,4 +1,3 @@
-import psycopg2
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -24,8 +23,22 @@ def switch_off():
     profile_name.clear()
 
 
+class NoSignal(Screen):
+    def menu(self):
+        if len(switch_auth) == 1:
+            return "authmenu"
+        else:
+            return "menu"
+
+
 class MenuScreen(Screen):
-    pass
+    def on_pre_enter(self):
+        json_menuscreen = asyncio.run(methods.loadmenu())
+        result = json.loads(json_menuscreen)
+        if result[0]['answer'] == 'ok':
+            pass
+        else:
+            sm.current = 'notsignal'
 
 
 class AboutUs(Screen):
@@ -262,6 +275,7 @@ class NoSignal(Screen):
 kv = Builder.load_file("My.kv")
 
 sm = ScreenManager(transition=FadeTransition())
+sm.add_widget(NoSignal(name='notsignal'))
 sm.add_widget(MenuScreen(name='menu'))
 sm.add_widget(AboutUs(name='about_us'))
 sm.add_widget(ListOrders(name='list_orders'))
