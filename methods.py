@@ -101,3 +101,13 @@ async def createorder(name_ord, text_order, order_town, order_obl, order_car, or
         await websocket.send(name_json)
         result = await websocket.recv()
         return result
+
+async def loadmenu():
+    async with websockets.connect(url) as websocket:
+        dict = {
+            "method": "loadmenu"
+        }
+        name_json = json.dumps(dict)
+        await websocket.send(name_json)
+        result = await websocket.recv()
+        return result
